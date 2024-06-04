@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,136 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model breed_types {
+  id     Int      @id @default(autoincrement())
+  type   String   @db.VarChar
+  breeds breeds[]
+}
+
+model breeds {
+  id          Int          @id @default(autoincrement())
+  type        Int?
+  breed       String       @db.VarChar
+  breed_types breed_types? @relation(fields: [type], references: [id], onDelete: Restrict)
+  pets        pets[]
+}
+
+model colors {
+  id    Int    @id @default(autoincrement())
+  color String @db.VarChar
+  pets  pets[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model communities {
+  id   Int                      @id @default(autoincrement())
+  name String                   @db.VarChar
+  geom Unsupported("geometry")?
+
+  @@index([geom], map: "sidx_communities_geom", type: Gist)
+}
+
+model pets {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  owner_id    String? @db.Uuid
+  name        String  @db.VarChar
+  color_id    Int?
+  breed_id    Int?
+  description String? @db.VarChar
+  breeds      breeds? @relation(fields: [breed_id], references: [id], onDelete: Restrict)
+  colors      colors? @relation(fields: [color_id], references: [id], onDelete: Restrict)
+  users       users?  @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+  posts       posts[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model places_seen_in {
+  id        String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  post_id   String?                  @db.Uuid
+  date_seen DateTime?                @db.Timestamp(6)
+  geom      Unsupported("geometry")?
+  posts     posts?                   @relation(fields: [post_id], references: [id], onDelete: Cascade)
+
+  @@index([geom], map: "sidx_places_seen_in_geom", type: Gist)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model posts {
+  id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pet_id         String?                  @db.Uuid
+  author_id      String?                  @db.Uuid
+  is_lost        Boolean?
+  lost_in        Unsupported("geometry")?
+  lost_datetime  DateTime?                @db.Timestamp(6)
+  found_in       Unsupported("geometry")?
+  details        String?
+  places_seen_in places_seen_in[]
+  users          users?                   @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  pets           pets?                    @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+
+  @@index([found_in], map: "sidx_post_found_in_geom", type: Gist)
+  @@index([lost_in], map: "sidx_post_lost_in_geom", type: Gist)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model spatial_ref_sys {
+  srid      Int     @id
+  auth_name String? @db.VarChar(256)
+  auth_srid Int?
+  srtext    String? @db.VarChar(2048)
+  proj4text String? @db.VarChar(2048)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id               String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  names            String                   @db.VarChar
+  last_names       String                   @db.VarChar
+  phone_number     String                   @db.VarChar
+  email            String                   @db.VarChar
+  dob              DateTime?                @db.Timestamp(6)
+  residence        Unsupported("geometry")?
+  current_location Unsupported("geometry")?
+  pets             pets[]
+  posts            posts[]
+
+  @@index([current_location], map: "sidx_user_current_location_geom", type: Gist)
+  @@index([residence], map: "sidx_user_residence_geom", type: Gist)
+}
+
+model departamentos {
+  id         Int                      @id
+  geom       Unsupported("geometry")?
+  fid        BigInt?
+  nom_dpto   String?                  @db.VarChar(254)
+  cod_dpto   String?                  @db.VarChar(254)
+  shape_leng Float?
+  shape_area Float?
+
+  @@index([geom], map: "sidx_departamentos_geom", type: Gist)
+}
+
+model municipios {
+  id         Int                      @id
+  geom       Unsupported("geometry")?
+  fid        BigInt?
+  nom_dpto   String?                  @db.VarChar(254)
+  cod_dpto   String?                  @db.VarChar(254)
+  nom_mun    String?                  @db.VarChar(254)
+  cod_mun    String?                  @db.VarChar(254)
+  cod_mun4   String?                  @db.VarChar(254)
+  tasa_pobr  Float?
+  pobr_fisdl String?                  @db.VarChar(20)
+  perim_km   Float?
+  area_km2   Float?
+  pob_total  Int?
+  pob_homb   Int?
+  pob_mujer  Int?
+  shape_leng Float?
+  shape_area Float?
+
+  @@index([geom], map: "sidx_municipios_geom", type: Gist)
 }
