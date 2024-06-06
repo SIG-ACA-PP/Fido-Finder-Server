@@ -32,6 +32,23 @@
 $ npm install
 ```
 
+## Running postgis docker container
+
+Option 1 (Recommended)
+
+```bash
+# This will create postgis container and a working db
+$ npm run db:dev:restart
+```
+
+Option 2
+
+```bash
+# This will create postgis container and a empty db
+$ docker pull postgis/postgis
+$ docker run --name postgis -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgis/postgis
+```
+
 ## Running the app
 
 ```bash
