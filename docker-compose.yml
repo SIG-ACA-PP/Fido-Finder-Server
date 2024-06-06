@@ -1,24 +1,30 @@
 version: '3.8'
 services:
   dev-db:
-    image: postgres:13
+    image: postgis/postgis
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: nest
+      POSTGRES_DB: fido
     networks:
-      - comadres
+      - fidoapp
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+
   test-db:
-    image: postgres:13
+    image: postgis/postgis
     ports:
       - 5433:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: nest
+      POSTGRES_DB: fido
     networks:
-      - comadres
+      - fidoapp
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+      
 networks:
-  comadres:
+  fidoapp:
