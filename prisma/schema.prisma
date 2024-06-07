@@ -94,7 +94,7 @@ model users {
   names            String                   @db.VarChar
   last_names       String                   @db.VarChar
   phone_number     String                   @db.VarChar
-  email            String                   @db.VarChar
+  email            String                   @unique @db.VarChar
   dob              DateTime?                @db.Timestamp(6)
   residence        Unsupported("geometry")?
   current_location Unsupported("geometry")?

@@ -25,7 +25,7 @@ CREATE TABLE "users" (
   "names" varchar NOT NULL,
   "last_names" varchar NOT NULL,
   "phone_number" varchar NOT NULL,
-  "email" varchar NOT NULL,
+  "email" varchar NOT NULL UNIQUE,
   "dob" timestamp,
   "residence" geometry(Point,4326),
   "current_location" geometry(Point,4326)
