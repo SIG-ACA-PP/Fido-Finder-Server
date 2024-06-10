@@ -9,6 +9,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { StatsModule } from './stats/stats.module';
 import { PostModule } from './post/post.module';
 import { PetModule } from './pet/pet.module';
+import { GeometryModule } from './geometry/geometry.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PetModule } from './pet/pet.module';
     StatsModule,
     PostModule,
     PetModule,
+    GeometryModule,
   ],
   controllers: [],
   providers: [],
