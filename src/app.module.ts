@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ColorModule } from './color/color.module';
 import { StatsModule } from './stats/stats.module';
+import { PostModule } from './post/post.module';
+import { PetModule } from './pet/pet.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { StatsModule } from './stats/stats.module';
     PrismaModule,
     ColorModule,
     StatsModule,
+    PostModule,
+    PetModule,
   ],
   controllers: [],
   providers: [],
