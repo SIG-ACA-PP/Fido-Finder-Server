@@ -23,4 +23,9 @@ export class PostController {
   findPostById(@Param() params: UUID) {
     return this.postService.findOneById(params.id);
   }
+
+  @Get(':id/seen-reports')
+  findPostSeenReports(@Param() params: UUID) {
+    return this.postService.findPostSeenReports(params.id);
+  }
 }

@@ -55,4 +55,15 @@ export class PostService {
       throw new NotFoundException('post not found');
     return posts?.[0];
   }
+
+  findPostSeenReports(postId: string) {
+    return this.prisma.$queryRaw`
+      SELECT 
+        id, 
+        date_seen, 
+        ST_AsGeoJSON(geom) as geom
+      FROM places_seen_in
+      WHERE post_id = ${postId}::uuid
+    `;
+  }
 }
