@@ -1,9 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { GeometryService } from 'src/geometry/geometry.service';
+import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PostService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private geomService: GeometryService,
+  ) {}
 
   findAll() {
     return this.prisma.$queryRaw`
@@ -64,6 +69,17 @@ export class PostService {
         ST_AsGeoJSON(geom) as geom
       FROM places_seen_in
       WHERE post_id = ${postId}::uuid
+    `;
+  }
+
+  createPostSeenReport(postId: string, point: Point) {
+    const _point = this.geomService.createDBPoint(point);
+    return this.prisma.$queryRaw`
+      INSERT INTO places_seen_in (post_id, geom)
+      VALUES (
+        ${postId}::uuid,
+        ST_GeomFromText(${_point}, 4326)
+      );
     `;
   }
 }

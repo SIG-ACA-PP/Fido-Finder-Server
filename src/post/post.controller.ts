@@ -1,8 +1,9 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PostService } from './post.service';
 import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { UUID } from 'src/utils/dto';
+import { Point } from 'src/models';
 
 @Controller('posts')
 export class PostController {
@@ -27,5 +28,10 @@ export class PostController {
   @Get(':id/seen-reports')
   findPostSeenReports(@Param() params: UUID) {
     return this.postService.findPostSeenReports(params.id);
+  }
+
+  @Post(':id/seen-reports')
+  createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
+    return this.postService.createPostSeenReport(params.id, dto);
   }
 }
