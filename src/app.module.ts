@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ColorModule } from './color/color.module';
+import { StatsModule } from './stats/stats.module';
 import { PostModule } from './post/post.module';
 import { PetModule } from './pet/pet.module';
 
@@ -15,6 +16,7 @@ import { PetModule } from './pet/pet.module';
     UserModule,
     PrismaModule,
     ColorModule,
+    StatsModule,
     PostModule,
     PetModule,
   ],
