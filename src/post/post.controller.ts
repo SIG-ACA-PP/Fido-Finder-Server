@@ -4,6 +4,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
+import { CreatePost } from './dto';
 
 @Controller('posts')
 export class PostController {
@@ -28,6 +29,13 @@ export class PostController {
   @Get(':id/seen-reports')
   findPostSeenReports(@Param() params: UUID) {
     return this.postService.findPostSeenReports(params.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('')
+  createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
+    dto.author_id = userId;
+    return this.postService.createPost(dto);
   }
 
   @Post(':id/seen-reports')
