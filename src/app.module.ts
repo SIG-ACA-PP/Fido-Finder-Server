@@ -10,6 +10,7 @@ import { StatsModule } from './stats/stats.module';
 import { PostModule } from './post/post.module';
 import { PetModule } from './pet/pet.module';
 import { GeometryModule } from './geometry/geometry.module';
+import { BreedModule } from './breed/breed.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GeometryModule } from './geometry/geometry.module';
     PostModule,
     PetModule,
     GeometryModule,
+    BreedModule,
   ],
   controllers: [],
   providers: [],
