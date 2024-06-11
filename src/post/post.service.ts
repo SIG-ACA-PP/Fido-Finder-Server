@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GeometryService } from 'src/geometry/geometry.service';
 import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -95,5 +100,23 @@ export class PostService {
         ST_GeomFromText(${_point}, 4326)
       );
     `;
+  }
+
+  async deletePost(postId: string, userId: string) {
+    const post = await this.prisma.posts.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) throw new NotFoundException('post not found');
+    if (post.author_id !== userId)
+      throw new ForbiddenException('user not allowed to delete post');
+
+    return this.prisma.posts.delete({
+      where: {
+        id: postId,
+      },
+    });
   }
 }

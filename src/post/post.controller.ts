@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { PostService } from './post.service';
 import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
@@ -41,5 +49,11 @@ export class PostController {
   @Post(':id/seen-reports')
   createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
     return this.postService.createPostSeenReport(params.id, dto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  deletePost(@GetUser('id') userId: string, @Param() params: UUID) {
+    return this.postService.deletePost(params.id, userId);
   }
 }
