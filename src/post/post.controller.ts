@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
-import { CreatePost } from './dto';
+import { CreatePost, UpdatePost } from './dto';
 
 @Controller('posts')
 export class PostController {
@@ -39,6 +40,11 @@ export class PostController {
     return this.postService.findPostSeenReports(params.id);
   }
 
+  @Post(':id/seen-reports')
+  createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
+    return this.postService.createPostSeenReport(params.id, dto);
+  }
+
   @UseGuards(JwtGuard)
   @Post('')
   createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
@@ -46,9 +52,14 @@ export class PostController {
     return this.postService.createPost(dto);
   }
 
-  @Post(':id/seen-reports')
-  createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
-    return this.postService.createPostSeenReport(params.id, dto);
+  @UseGuards(JwtGuard)
+  @Patch(':id')
+  updatePostAsFound(
+    @GetUser('id') userId: string,
+    @Param() params: UUID,
+    @Body() dto: UpdatePost,
+  ) {
+    return this.postService.updatePostAsFound(params.id, userId, dto);
   }
 
   @UseGuards(JwtGuard)

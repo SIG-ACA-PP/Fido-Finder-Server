@@ -7,7 +7,7 @@ import {
 import { GeometryService } from 'src/geometry/geometry.service';
 import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePost } from './dto';
+import { CreatePost, UpdatePost } from './dto';
 
 @Injectable()
 export class PostService {
@@ -102,7 +102,7 @@ export class PostService {
     `;
   }
 
-  async deletePost(postId: string, userId: string) {
+  private async validatePostOwnership(postId: string, userId: string) {
     const post = await this.prisma.posts.findUnique({
       where: {
         id: postId,
@@ -113,6 +113,22 @@ export class PostService {
     if (post.author_id !== userId)
       throw new ForbiddenException('user not allowed to delete post');
 
+    return post;
+  }
+
+  async updatePostAsFound(postId: string, userId: string, dto: UpdatePost) {
+    await this.validatePostOwnership(postId, userId);
+
+    const _point = this.geomService.createDBPoint(dto.found_in);
+    return this.prisma.$queryRaw`
+      UPDATE posts
+      SET is_lost=FALSE, found_in=ST_GeomFromText(${_point}, 4326)
+      WHERE id = ${postId}::uuid
+    `;
+  }
+
+  async deletePost(postId: string, userId: string) {
+    await this.validatePostOwnership(postId, userId);
     return this.prisma.posts.delete({
       where: {
         id: postId,
