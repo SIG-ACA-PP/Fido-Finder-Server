@@ -11,6 +11,7 @@ import { GetUser } from '../auth/decorator';
 import { users as User } from '@prisma/client';
 import { EditUserDto } from './dto';
 import { UserService } from './user.service';
+import { Point } from 'src/models';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -28,8 +29,8 @@ export class UserController {
   }
 
   @Patch('/residence')
-  editUserResidence(@GetUser('id') userId: string) {
-    return this.userService.editUserResidence(userId);
+  editUserResidence(@GetUser('id') userId: string, @Body() dto: Point) {
+    return this.userService.editUserResidence(userId, dto);
   }
 
   @Delete('/residence')
@@ -38,11 +39,11 @@ export class UserController {
   }
 
   @Patch('/location')
-  editUserLocation(@GetUser('id') userId: string) {
-    return this.userService.editUserLocation(userId);
+  editUserLocation(@GetUser('id') userId: string, @Body() dto: Point) {
+    return this.userService.editUserLocation(userId, dto);
   }
 
-  @Patch('/location')
+  @Delete('/location')
   deleteUserLocation(@GetUser('id') userId: string) {
     return this.userService.deleteUserLocation(userId);
   }
