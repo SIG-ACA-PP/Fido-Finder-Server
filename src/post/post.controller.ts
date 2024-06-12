@@ -13,7 +13,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
-import { CreatePost, UpdatePost } from './dto';
+import { CreatePost, DeleteSeenReport, UpdatePost } from './dto';
 
 @Controller('posts')
 export class PostController {
@@ -43,6 +43,12 @@ export class PostController {
   @Post(':id/seen-reports')
   createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
     return this.postService.createPostSeenReport(params.id, dto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':postId/seen-reports/:seenId')
+  deleteSeenReport(@Param() params: DeleteSeenReport) {
+    return this.postService.deleteSeenReport(params.postId, params.seenId);
   }
 
   @UseGuards(JwtGuard)

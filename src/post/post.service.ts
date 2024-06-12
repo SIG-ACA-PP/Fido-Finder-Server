@@ -1,6 +1,5 @@
 import {
   ForbiddenException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -100,6 +99,15 @@ export class PostService {
         ST_GeomFromText(${_point}, 4326)
       );
     `;
+  }
+
+  async deleteSeenReport(postId: string, seenReportId: string) {
+    return this.prisma.places_seen_in.delete({
+      where: {
+        id: seenReportId,
+        post_id: postId,
+      },
+    });
   }
 
   private async validatePostOwnership(postId: string, userId: string) {
