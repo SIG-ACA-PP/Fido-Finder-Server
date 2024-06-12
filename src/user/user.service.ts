@@ -18,4 +18,10 @@ export class UserService {
 
     return user;
   }
+
+  // TODO
+  editUserResidence(userId: string) {}
+  deleteUserResidence(userId: string) {}
+  editUserLocation(userId: string) {}
+  deleteUserLocation(userId: string) {}
 }
