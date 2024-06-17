@@ -65,8 +65,8 @@ $ npm run start:prod
 ## Prisma
 
 ```bash
-# create migrations
-$ npx prisma migrate dev --name init
+# Generate Prisma Client with the following command
+$ prisma generate
 ```
 
 ## Prisma studio
