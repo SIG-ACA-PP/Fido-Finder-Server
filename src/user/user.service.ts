@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
+import { Point } from 'src/models';
 
 @Injectable()
 export class UserService {
@@ -18,4 +19,15 @@ export class UserService {
 
     return user;
   }
+
+  // TODO
+  // This function should set residence to geometry
+  editUserResidence(userId: string, dto: Point) {}
+  // This function should set residence to NULL
+  deleteUserResidence(userId: string) {}
+
+  // This function should set residence to geometry
+  editUserLocation(userId: string, dto: Point) {}
+  // This function should set current_location to NULL
+  deleteUserLocation(userId: string) {}
 }
