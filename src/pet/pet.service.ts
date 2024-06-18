@@ -11,11 +11,20 @@ export class PetService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.pets.findMany();
+    return this.prisma.pets.findMany({
+      include: {
+        breeds: true,
+        colors: true,
+      },
+    });
   }
 
   findAllByUser(userId: string) {
     return this.prisma.pets.findMany({
+      include: {
+        breeds: true,
+        colors: true,
+      },
       where: {
         owner_id: userId,
       },
@@ -24,6 +33,10 @@ export class PetService {
 
   findOneById(petId: string) {
     return this.prisma.pets.findUnique({
+      include: {
+        breeds: true,
+        colors: true,
+      },
       where: {
         id: petId,
       },
