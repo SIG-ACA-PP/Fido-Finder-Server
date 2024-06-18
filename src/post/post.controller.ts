@@ -6,12 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { JwtGuard } from 'src/auth/guard';
 import { GetUser } from 'src/auth/decorator';
-import { UUID } from 'src/utils/dto';
+import { PaginationQueryDto, UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
 import { CreatePost, DeleteSeenReport, UpdatePost } from './dto';
 
@@ -20,8 +21,9 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Get('')
-  findPosts() {
-    return this.postService.findAll();
+  findPosts(@Query() paginationQuery: PaginationQueryDto) {
+    const { take = 10, skip = 0 } = paginationQuery;
+    return this.postService.findAll(take, skip);
   }
 
   @UseGuards(JwtGuard)
