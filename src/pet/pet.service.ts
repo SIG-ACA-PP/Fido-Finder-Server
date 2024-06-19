@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePet } from './dto';
+import { UpdatePet } from './dto/update-pet.dto';
 
 @Injectable()
 export class PetService {
@@ -47,6 +48,17 @@ export class PetService {
     return this.prisma.pets.create({
       data: {
         ...dto,
+      },
+    });
+  }
+
+  updatePet(petId: string, dto: UpdatePet) {
+    return this.prisma.pets.update({
+      data: {
+        ...dto,
+      },
+      where: {
+        id: petId,
       },
     });
   }

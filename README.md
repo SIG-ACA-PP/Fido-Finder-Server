@@ -65,6 +65,9 @@ $ npm run start:prod
 ## Prisma
 
 ```bash
+# Pull schema
+$ npx prisma db pull
+
 # Generate Prisma Client with the following command
 $ prisma generate
 ```
