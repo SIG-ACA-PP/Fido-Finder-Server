@@ -6,8 +6,14 @@ import {
 import { GeometryService } from 'src/geometry/geometry.service';
 import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePost, UpdatePost } from './dto';
+import {
+  CreatePost,
+  PostGeomsDto,
+  PostGeomsWithIdDto,
+  UpdatePost,
+} from './dto';
 import { Prisma } from '@prisma/client';
+import { PostDto } from './dto/post.dto';
 
 @Injectable()
 export class PostService {
@@ -16,15 +22,8 @@ export class PostService {
     private geomService: GeometryService,
   ) {}
 
-  private async getGeometries(
-    postId: string,
-  ): Promise<{ lost_in: string | null; found_in: string | null }> {
-    const data = await this.prisma.$queryRaw<
-      {
-        lost_in: string | null;
-        found_in: string | null;
-      }[]
-    >`
+  private async getGeometries(postId: string): Promise<PostGeomsDto> {
+    const data = await this.prisma.$queryRaw<PostGeomsDto[]>`
       SELECT 
         ST_AsGeoJSON(lost_in) as lost_in,
         ST_AsGeoJSON(found_in) as found_in
@@ -37,12 +36,8 @@ export class PostService {
 
   private async getGeometriesArr(
     postIds: string[],
-  ): Promise<
-    { id: string; lost_in: string | null; found_in: string | null }[]
-  > {
-    return await this.prisma.$queryRaw<
-      { id: string; lost_in: string | null; found_in: string | null }[]
-    >`
+  ): Promise<PostGeomsWithIdDto[]> {
+    return await this.prisma.$queryRaw<PostGeomsWithIdDto[]>`
       SELECT 
         id,
         ST_AsGeoJSON(lost_in) as lost_in,
@@ -53,9 +48,9 @@ export class PostService {
   }
 
   private combineResults(
-    posts: any[],
-    geoms: { id: string; lost_in: string; found_in: string }[],
-  ) {
+    posts: PostDto[],
+    geoms: PostGeomsWithIdDto[],
+  ): PostDto[] {
     return posts.map((post) => {
       const geom = geoms.find((g) => g.id === post.id);
       return {
