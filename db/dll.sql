@@ -43,9 +43,9 @@ CREATE TABLE "posts" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "pet_id" uuid REFERENCES "pets" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   "author_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  "is_lost" bool,
+  "is_lost" bool DEFAULT true,
   "lost_in" geometry(Point,4326),
-  "lost_datetime" timestamp,
+  "lost_datetime" timestamp  DEFAULT CURRENT_TIMESTAMP,
   "found_in" geometry(Point,4326),
   "details" text
 );
