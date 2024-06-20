@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -46,8 +47,19 @@ export class PetController {
 
   @UseGuards(JwtGuard)
   @Post('')
-  createPet(@GetUser('id') userId: string, @Body() dto: CreatePet) {
+  @UseInterceptors(FileInterceptor('file'))
+  async createPet(
+    @GetUser('id') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: CreatePet,
+  ) {
+    dto.img = null;
     dto.owner_id = userId;
+    if (file) {
+      const image = await this.cloudinaryService.uploadFile(file);
+      dto.img = image?.url ?? null;
+    }
+
     return this.petService.createPet(dto);
   }
 
@@ -58,6 +70,8 @@ export class PetController {
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string,
   ) {
+    if (!file) throw new BadRequestException('file is required');
+
     const image = await this.cloudinaryService.uploadFile(file);
     if (!image || !image.url)
       throw new InternalServerErrorException(
