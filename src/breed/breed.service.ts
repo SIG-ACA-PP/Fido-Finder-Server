@@ -7,11 +7,18 @@ export class BreedService {
   constructor(private prisma: PrismaService) {}
 
   getBreeds() {
-    return this.prisma.breeds.findMany();
+    return this.prisma.breeds.findMany({
+      include: {
+        breed_types: true,
+      },
+    });
   }
 
   getOneBreed(id: number) {
     return this.prisma.breeds.findUnique({
+      include: {
+        breed_types: true,
+      },
       where: { id },
     });
   }
