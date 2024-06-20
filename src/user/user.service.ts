@@ -5,7 +5,10 @@ import { Point } from 'src/models';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private geomService: GeometryService,
+  ) {}
 
   async editUser(userId: string, dto: EditUserDto) {
     const user = await this.prisma.users.update({
@@ -22,12 +25,78 @@ export class UserService {
 
   // TODO
   // This function should set residence to geometry
-  editUserResidence(userId: string, dto: Point) {}
+  async editUserResidence(userId: string, dto: Point) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) throw new NotFoundException('user not found');
+
+    const _point = this.geomService.createDBPoint(dto);
+
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET residence=ST_GeomFromText(${_point}, 4326)
+    WHERE id=${userId}
+    `;
+  }
   // This function should set residence to NULL
-  deleteUserResidence(userId: string) {}
+  async deleteUserResidence(userId: string) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) throw new NotFoundException('user not found');
+
+    return this.prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        residence: null,
+      },
+    })
+  }
 
   // This function should set residence to geometry
-  editUserLocation(userId: string, dto: Point) {}
+  async editUserLocation(userId: string, dto: Point) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) throw new NotFoundException('user not found');
+
+    const _point = this.geomService.createDBPoint(dto);
+
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET current_location=ST_GeomFromText(${_point}, 4326)
+    WHERE id=${userId}
+    `;
+  }
   // This function should set current_location to NULL
-  deleteUserLocation(userId: string) {}
+  async deleteUserLocation(userId: string) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) throw new NotFoundException('user not found');
+
+    return this.prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        current_location: null,
+      },
+    })
+  }
 }
