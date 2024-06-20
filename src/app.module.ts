@@ -11,6 +11,7 @@ import { PostModule } from './post/post.module';
 import { PetModule } from './pet/pet.module';
 import { GeometryModule } from './geometry/geometry.module';
 import { BreedModule } from './breed/breed.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BreedModule } from './breed/breed.module';
     PetModule,
     GeometryModule,
     BreedModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

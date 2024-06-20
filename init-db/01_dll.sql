@@ -36,7 +36,8 @@ CREATE TABLE "pets" (
   "name" varchar NOT NULL,
   "color_id" int REFERENCES "colors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   "breed_id" int REFERENCES "breeds" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  "description" varchar
+  "description" varchar,
+  "img" varchar
 );
 
 CREATE TABLE "posts" (

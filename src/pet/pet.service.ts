@@ -5,17 +5,27 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePet } from './dto';
+import { UpdatePet } from './dto/update-pet.dto';
 
 @Injectable()
 export class PetService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.pets.findMany();
+    return this.prisma.pets.findMany({
+      include: {
+        breeds: true,
+        colors: true,
+      },
+    });
   }
 
   findAllByUser(userId: string) {
     return this.prisma.pets.findMany({
+      include: {
+        breeds: true,
+        colors: true,
+      },
       where: {
         owner_id: userId,
       },
@@ -24,6 +34,10 @@ export class PetService {
 
   findOneById(petId: string) {
     return this.prisma.pets.findUnique({
+      include: {
+        breeds: true,
+        colors: true,
+      },
       where: {
         id: petId,
       },
@@ -34,6 +48,17 @@ export class PetService {
     return this.prisma.pets.create({
       data: {
         ...dto,
+      },
+    });
+  }
+
+  updatePet(petId: string, dto: UpdatePet) {
+    return this.prisma.pets.update({
+      data: {
+        ...dto,
+      },
+      where: {
+        id: petId,
       },
     });
   }

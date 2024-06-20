@@ -44,6 +44,7 @@ model pets {
   color_id    Int?
   breed_id    Int?
   description String? @db.VarChar
+  img         String? @db.VarChar
   breeds      breeds? @relation(fields: [breed_id], references: [id], onDelete: Restrict)
   colors      colors? @relation(fields: [color_id], references: [id], onDelete: Restrict)
   users       users?  @relation(fields: [owner_id], references: [id], onDelete: Cascade)
