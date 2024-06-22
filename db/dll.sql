@@ -22,8 +22,10 @@ CREATE TABLE "breeds" (
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  "username" varchar,
+  "name" varchar,
+  "lastname" varchar,
   "phone_number" varchar,
+  "img" varchar,
   "email" varchar NOT NULL UNIQUE,
   "dob" timestamp,
   "residence" geometry(Point,4326),

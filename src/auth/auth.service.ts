@@ -37,7 +37,18 @@ export class AuthService {
     };
   }
 
-  // TODO: use google auth strategy before prod
+  async oAuthLogin(dto: AuthDto) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!user) return this.signUp(dto);
+    else return this.signToken(user.id, user.email);
+  }
+
+  // TODO: remove after testing process!
   async signIn(dto: AuthDto) {
     const user = await this.prisma.users.findUnique({
       where: {
@@ -52,6 +63,7 @@ export class AuthService {
     return this.signToken(user.id, user.email);
   }
 
+  // TODO: make private after testing process!
   async signUp(authDto: AuthDto) {
     // const hash = await argon.hash(authDto.password);
     try {
