@@ -22,8 +22,10 @@ CREATE TABLE "breeds" (
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  "username" varchar,
+  "name" varchar,
+  "lastname" varchar,
   "phone_number" varchar,
+  "img" varchar,
   "email" varchar NOT NULL UNIQUE,
   "dob" timestamp,
   "residence" geometry(Point,4326),
@@ -54,7 +56,7 @@ CREATE TABLE "posts" (
 CREATE TABLE "places_seen_in" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "post_id" uuid REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  "date_seen" timestamp,
+  "date_seen" timestamp DEFAULT CURRENT_TIMESTAMP,
   "geom" geometry(Point,4326)
 );
 
