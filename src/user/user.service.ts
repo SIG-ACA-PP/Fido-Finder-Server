@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import { Point } from 'src/models';
+import { GeometryService } from 'src/geometry/geometry.service';
 
 @Injectable()
 export class UserService {
@@ -52,14 +53,15 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    return this.prisma.users.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        residence: null,
-      },
-    })
+    // TODO: this doesnt work...
+    // return this.prisma.users.update({
+    //   where: {
+    //     id: userId,
+    //   },
+    //   data: {
+    //     residence: null,
+    //   },
+    // })
   }
 
   // This function should set residence to geometry
@@ -90,13 +92,14 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    return this.prisma.users.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        current_location: null,
-      },
-    })
+    // TODO: this doesnt work...
+    // return this.prisma.users.update({
+    //   where: {
+    //     id: userId,
+    //   },
+    //   data: {
+    //     current_location: null,
+    //   },
+    // })
   }
 }
