@@ -37,9 +37,12 @@ services:
     environment:
       DATABASE_URL: "postgresql://postgres:secret@dev-db:5432/fido?schema=public"
       JWT_SECRET: "super-secret"
-      CLOUDINARY_NAME: "duawau1ei"
-      CLOUDINARY_API_KEY: "166356831975879"
-      CLOUDINARY_API_SECRET: "fCqzLmfihJSOwk1VF08SqVFiANA"
+      GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_SECRET: ""
+      CALLBACK_URL: ""
+      CLOUDINARY_NAME: ""
+      CLOUDINARY_API_KEY: ""
+      CLOUDINARY_API_SECRET: ""
     networks:
       - fidoapp
     depends_on:
