@@ -29,6 +29,10 @@ export class AuthController {
     return this.authService.signUp(authDto);
   }
 
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async auth() {}
+
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   googleAuthCallback(@Req() req) {
