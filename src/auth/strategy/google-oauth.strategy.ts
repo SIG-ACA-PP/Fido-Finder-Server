@@ -27,13 +27,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       provider: 'google',
       providerId: id,
       email: emails[0].value,
-      name: `${name.givenName} ${name.familyName}`,
+      name: name.givenName,
+      lastname: name.familyName,
       picture: photos[0].value,
     };
 
     const user: AuthDto = {
       email: _user.email,
-      username: _user.name,
+      name: _user.name,
+      lastname: _user.lastname,
+      img: _user.picture,
     };
 
     done(null, user);

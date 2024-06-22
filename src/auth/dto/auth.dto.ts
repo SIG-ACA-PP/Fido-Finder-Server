@@ -7,5 +7,13 @@ export class AuthDto {
 
   @IsString()
   @IsOptional()
-  username?: string;
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  lastname?: string;
+
+  @IsString()
+  @IsOptional()
+  img?: string;
 }
