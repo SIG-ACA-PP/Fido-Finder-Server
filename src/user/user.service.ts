@@ -24,7 +24,6 @@ export class UserService {
     return user;
   }
 
-  // TODO
   // This function should set residence to geometry
   async editUserResidence(userId: string, dto: Point) {
     const user = await this.prisma.users.findUnique({
@@ -40,7 +39,7 @@ export class UserService {
     return this.prisma.$queryRaw`
     UPDATE users
     SET residence=ST_GeomFromText(${_point}, 4326)
-    WHERE id=${userId}
+    WHERE id=${userId}::uuid
     `;
   }
   // This function should set residence to NULL
@@ -53,15 +52,11 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    // TODO: this doesnt work...
-    // return this.prisma.users.update({
-    //   where: {
-    //     id: userId,
-    //   },
-    //   data: {
-    //     residence: null,
-    //   },
-    // })
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET residence=null
+    WHERE id=${userId}::uuid
+    `;
   }
 
   // This function should set residence to geometry
@@ -79,7 +74,7 @@ export class UserService {
     return this.prisma.$queryRaw`
     UPDATE users
     SET current_location=ST_GeomFromText(${_point}, 4326)
-    WHERE id=${userId}
+    WHERE id=${userId}::uuid
     `;
   }
   // This function should set current_location to NULL
@@ -92,14 +87,10 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    // TODO: this doesnt work...
-    // return this.prisma.users.update({
-    //   where: {
-    //     id: userId,
-    //   },
-    //   data: {
-    //     current_location: null,
-    //   },
-    // })
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET current_location=null
+    WHERE id=${userId}::uuid
+    `;
   }
 }
