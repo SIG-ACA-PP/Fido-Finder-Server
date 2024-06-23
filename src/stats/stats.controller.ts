@@ -32,6 +32,6 @@ export class StatsController {
 
   @Get('/test')
   test() {
-    return { msg: 'Hello this is a test :)' };
+    return { msg: 'Hello this is a test :) v2' };
   }
 }
