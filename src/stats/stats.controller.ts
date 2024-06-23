@@ -29,4 +29,9 @@ export class StatsController {
   getLostPetAmountsByCommunities() {
     return this.statsService.getLostPetAmountsByCommunities();
   }
+
+  @Get('/test')
+  test() {
+    return { msg: 'Hello this is a test :)' };
+  }
 }
