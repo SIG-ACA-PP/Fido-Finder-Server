@@ -5,9 +5,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { BreedService } from './breed.service';
 import { CreateBreed, CreateBreedType } from './dto';
+import { JwtGuard } from 'src/auth/guard';
 
 @Controller('breeds')
 export class BreedController {
@@ -23,6 +25,7 @@ export class BreedController {
     return this.breedService.getOneBreed(id);
   }
 
+  @UseGuards(JwtGuard)
   @Post('/race')
   createBreed(@Body() dto: CreateBreed) {
     return this.breedService.createBreed(dto);
@@ -38,6 +41,7 @@ export class BreedController {
     return this.breedService.getOneBreedType(id);
   }
 
+  @UseGuards(JwtGuard)
   @Post('/types')
   createBreedType(@Body() dto: CreateBreedType) {
     return this.breedService.createBreedType(dto);
