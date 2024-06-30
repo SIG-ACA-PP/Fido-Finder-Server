@@ -23,6 +23,6 @@ export class NotificationsService {
   // where a pet is reported lost (post.lost_in).
   notifyNearUsersByCommunity(point: Point) {}
 
-  private sendEmail() {}
+  private sendEmail() {}0
   private sendWaMessage() {}
 }
