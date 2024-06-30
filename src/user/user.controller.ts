@@ -28,6 +28,11 @@ export class UserController {
     return this.userService.editUser(userId, dto);
   }
 
+  @Get('/residence')
+  getUserResidence(@GetUser('id') userId: string) {
+    return this.userService.getUserResidence(userId);
+  }
+
   @Patch('/residence')
   editUserResidence(@GetUser('id') userId: string, @Body() dto: Point) {
     return this.userService.editUserResidence(userId, dto);

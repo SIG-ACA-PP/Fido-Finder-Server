@@ -56,7 +56,7 @@ CREATE TABLE "posts" (
 CREATE TABLE "places_seen_in" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "post_id" uuid REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  "date_seen" timestamp,
+  "date_seen" timestamp DEFAULT CURRENT_TIMESTAMP,
   "geom" geometry(Point,4326)
 );
 

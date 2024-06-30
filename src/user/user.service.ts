@@ -24,6 +24,17 @@ export class UserService {
     return user;
   }
 
+  async getUserResidence(userId: string) {
+    const res = await this.prisma.$queryRaw`
+      SELECT 
+        ST_AsGeoJSON(residence) as residence
+      FROM users
+      WHERE id = ${userId}::uuid
+    `;
+
+    return { residence: res?.[0].residence || null };
+  }
+
   // This function should set residence to geometry
   async editUserResidence(userId: string, dto: Point) {
     const user = await this.prisma.users.findUnique({
@@ -42,6 +53,7 @@ export class UserService {
     WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set residence to NULL
   async deleteUserResidence(userId: string) {
     const user = await this.prisma.users.findUnique({
@@ -77,6 +89,7 @@ export class UserService {
     WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set current_location to NULL
   async deleteUserLocation(userId: string) {
     const user = await this.prisma.users.findUnique({
