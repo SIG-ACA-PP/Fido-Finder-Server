@@ -55,7 +55,7 @@ model pets {
 model places_seen_in {
   id        String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   post_id   String?                  @db.Uuid
-  date_seen DateTime?                @db.Timestamp(6)
+  date_seen DateTime?                @default(now()) @db.Timestamp(6)
   geom      Unsupported("geometry")?
   posts     posts?                   @relation(fields: [post_id], references: [id], onDelete: Cascade)
 

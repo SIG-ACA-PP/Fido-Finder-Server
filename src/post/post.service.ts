@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -14,11 +15,13 @@ import {
 } from './dto';
 import { Prisma } from '@prisma/client';
 import { PostDto } from './dto/post.dto';
+import { PetService } from 'src/pet/pet.service';
 
 @Injectable()
 export class PostService {
   constructor(
     private prisma: PrismaService,
+    private petService: PetService,
     private geomService: GeometryService,
   ) {}
 
@@ -138,7 +141,14 @@ export class PostService {
     `;
   }
 
-  createPost(dto: CreatePost) {
+  async createPost(dto: CreatePost) {
+    const pet = await this.petService.findOneById(dto.pet_id);
+    if (!pet) throw new BadRequestException('pet not found');
+    if (pet.owner_id !== dto.author_id)
+      throw new ForbiddenException(
+        'You do not have permission to post this pet',
+      );
+
     const _point = this.geomService.createDBPoint(dto.lost_in);
     return this.prisma.$queryRaw`
       INSERT INTO posts (pet_id, author_id, lost_in, details)
