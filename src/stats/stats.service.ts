@@ -18,10 +18,20 @@ export class StatsService {
     return results;
   }
 
-  // Retrieve the locations (post.lost_in) as geom
+// Retrieve the locations (post.lost_in) as geom
   // of lost pet reports within a specific department,
   // accepting the department ID as input.
-  getLostPetsByOneDepartment(deptId: number) {}
+  async getLostPetsByOneDepartment(deptId: string) {
+    const results = await this.prisma.$queryRaw`
+      SELECT p.lost_in
+      FROM posts p
+      JOIN departamentos d ON ST_Within(p.lost_in, d.geom)
+      WHERE d.cod_dpto = ${deptId}
+        AND p.is_lost = true;
+    `;
+
+    return results;
+  }
 
   // Obtain the number of lost pets grouped by municipalities.
   getLostPetAmountsByMunicipalities() {}
