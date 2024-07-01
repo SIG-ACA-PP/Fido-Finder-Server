@@ -49,7 +49,17 @@ export class StatsService {
   // Retrieve the locations (post.lost_in) as geom
   // of lost pet reports within a specific municipality,
   // accepting the municipality ID as input.
-  getLostPetsByOneMunicipality(munId: number) {}
+  async getLostPetsByOneMunicipality(munId: string) {
+    const results = await this.prisma.$queryRaw`
+      SELECT p.lost_in
+      FROM posts p
+      JOIN municipios m ON ST_Within(p.lost_in, m.geom)
+      WHERE m.cod_mun = ${munId}
+        AND p.is_lost = true;
+    `;
+
+    return results;
+  }
 
   // Obtain the number of lost pets grouped by communities
   getLostPetAmountsByCommunities() {}
