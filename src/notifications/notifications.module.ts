@@ -9,6 +9,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
   imports: [
     MailerModule.forRoot({
       transport: {
+        pool: true,
         host: 'smtp.office365.com', //Outlook SMTP server
         port: 587,
         secure: false,

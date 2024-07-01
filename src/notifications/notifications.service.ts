@@ -1,8 +1,8 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { send } from 'process';
 import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { users as User } from '@prisma/client';
 
 @Injectable()
 export class NotificationsService {
@@ -25,18 +25,15 @@ export class NotificationsService {
   // where a pet is reported lost (post.lost_in).
   notifyNearUsersByCommunity(point: Point) {}
 
-  private async sendEmail(message : string, userId: string) {
-    const user = await this.prisma.users.findUnique({
-      where:{
-        id:userId,
-      }
-    });
+  //Send multiple emails
+  async sendEmail(users: User[]) {
 
-    if(!user) throw new NotFoundException("User not found");
+    const userEmails = users.map((u) => u.email )
+
 
     if(!message)
       {
-        message = `Hello ${user.name} \n
+        message = `Hello  \n
         
         Welcome to Fido Finder, this is a test email \n
 
@@ -47,7 +44,7 @@ export class NotificationsService {
 
       try {
         await this.mailerService.sendMail({
-          to: user.email,
+          to: userEmails,
           subject: 'Test Email',
           text:message,
         }); 
