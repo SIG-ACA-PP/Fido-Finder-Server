@@ -6,7 +6,17 @@ export class StatsService {
   constructor(private prisma: PrismaService) {}
 
   // Obtain the number of lost pets grouped by department.
-  getLostPetAmountsByDepartments() {}
+  async getLostPetAmountsByDepartments() {
+    const results = await this.prisma.$queryRaw`
+      SELECT d.nom_dpto AS department, COUNT(p.id) AS lost_pets_count
+      FROM departamentos d
+      JOIN posts p ON ST_Within(p.lost_in, d.geom)
+      WHERE p.is_lost = true
+      GROUP BY d.nom_dpto;
+    `;
+
+    return results;
+  }
 
   // Retrieve the locations (post.lost_in) as geom
   // of lost pet reports within a specific department,
