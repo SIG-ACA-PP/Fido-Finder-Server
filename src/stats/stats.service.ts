@@ -61,6 +61,20 @@ export class StatsService {
     return results;
   }
 
-  // Obtain the number of lost pets grouped by communities
-  getLostPetAmountsByCommunities() {}
+  // Obtain the number of lost pets grouped by communities.
+  async getLostPetAmountsByCommunities() {
+    const results = await this.prisma.$queryRaw`
+      WITH lost_pets_per_community AS (
+        SELECT c.colonia, p.id
+        FROM communities c
+        JOIN posts p ON ST_Within(p.lost_in, c.geom)
+        WHERE p.is_lost = true
+      )
+      SELECT colonia, COUNT(id) AS lost_pets_count
+      FROM lost_pets_per_community
+      GROUP BY colonia;
+    `;
+
+    return results;
+  }
 }
