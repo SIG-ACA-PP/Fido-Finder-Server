@@ -24,7 +24,17 @@ export class UserService {
     return user;
   }
 
-  // TODO
+  async getUserResidence(userId: string) {
+    const res = await this.prisma.$queryRaw`
+      SELECT 
+        ST_AsGeoJSON(residence) as residence
+      FROM users
+      WHERE id = ${userId}::uuid
+    `;
+
+    return { residence: res?.[0].residence || null };
+  }
+
   // This function should set residence to geometry
   async editUserResidence(userId: string, dto: Point) {
     const user = await this.prisma.users.findUnique({
@@ -40,9 +50,10 @@ export class UserService {
     return this.prisma.$queryRaw`
     UPDATE users
     SET residence=ST_GeomFromText(${_point}, 4326)
-    WHERE id=${userId}
+    WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set residence to NULL
   async deleteUserResidence(userId: string) {
     const user = await this.prisma.users.findUnique({
@@ -53,15 +64,11 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    // TODO: this doesnt work...
-    // return this.prisma.users.update({
-    //   where: {
-    //     id: userId,
-    //   },
-    //   data: {
-    //     residence: null,
-    //   },
-    // })
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET residence=null
+    WHERE id=${userId}::uuid
+    `;
   }
 
   // This function should set residence to geometry
@@ -79,9 +86,10 @@ export class UserService {
     return this.prisma.$queryRaw`
     UPDATE users
     SET current_location=ST_GeomFromText(${_point}, 4326)
-    WHERE id=${userId}
+    WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set current_location to NULL
   async deleteUserLocation(userId: string) {
     const user = await this.prisma.users.findUnique({
@@ -92,14 +100,10 @@ export class UserService {
 
     if (!user) throw new NotFoundException('user not found');
 
-    // TODO: this doesnt work...
-    // return this.prisma.users.update({
-    //   where: {
-    //     id: userId,
-    //   },
-    //   data: {
-    //     current_location: null,
-    //   },
-    // })
+    return this.prisma.$queryRaw`
+    UPDATE users
+    SET current_location=null
+    WHERE id=${userId}::uuid
+    `;
   }
 }

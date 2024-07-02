@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
 import { ColorService } from './color.service';
 import { CreateColor } from './dto';
+import { JwtGuard } from 'src/auth/guard';
 
 @Controller('colors')
 export class ColorController {
@@ -16,6 +17,7 @@ export class ColorController {
     return this.colorService.getOneColor(id);
   }
 
+  @UseGuards(JwtGuard)
   @Post('')
   createColor(@Body() dto: CreateColor) {
     return this.colorService.createColor(dto);

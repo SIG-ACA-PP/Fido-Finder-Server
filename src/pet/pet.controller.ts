@@ -28,7 +28,7 @@ export class PetController {
   ) {}
 
   // TODO: add pagination
-  @Get('')
+  @Get()
   findPets() {
     return this.petService.findAll();
   }
@@ -39,14 +39,13 @@ export class PetController {
     return this.petService.findAllByUser(userId);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':id')
   findPetById(@Param('id') id: string) {
     return this.petService.findOneById(id);
   }
 
   @UseGuards(JwtGuard)
-  @Post('')
+  @Post()
   @UseInterceptors(FileInterceptor('file'))
   async createPet(
     @GetUser('id') userId: string,

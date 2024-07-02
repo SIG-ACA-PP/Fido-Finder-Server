@@ -1,4 +1,4 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Query } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { Point } from 'src/models';
 
@@ -18,7 +18,7 @@ export class NotificationsController {
   }
 
   @Get('/users/community')
-  notifyNearUsersByCommunity(@Body() dto: Point) {
-    return this.notificationsService.notifyNearUsersByCommunity(dto);
+  notifyNearUsersByCommunity(@Query('id') postId: string) {
+    return this.notificationsService.notifyNearUsersByCommunity(postId);
   }
 }

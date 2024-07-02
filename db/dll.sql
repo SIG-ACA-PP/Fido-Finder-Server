@@ -60,11 +60,25 @@ CREATE TABLE "places_seen_in" (
   "geom" geometry(Point,4326)
 );
 
-CREATE TABLE "communities" (
+/* CREATE TABLE "communities" (
   "id" serial PRIMARY KEY,
   "name" varchar NOT NULL,
   "geom" geometry(MultiPolygon,32616) -- TODO: definir sistema de referecia
+); */
+
+DROP TABLE IF EXISTS public.communities CASCADE;
+CREATE TABLE public.communities (
+  geom public.geometry(MultiPolygon,4326),
+  id integer NOT NULL,
+  fid bigint,
+  poligono character varying(254),
+  zona_posta character varying(254),
+  cod_mun4 character varying(254),
+  tipo character varying(254),
+  colonia character varying(254),
+  tipo_colon character varying(254)
 );
+
 
 -- CREATE TABLE "departments" (
 --   "id" serial PRIMARY KEY,
@@ -109,12 +123,17 @@ CREATE TABLE public.municipios (
   shape_area double precision
 );
 
+-- ADD Primary Keys
+ALTER TABLE ONLY public.communities
+    ADD CONSTRAINT communities_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY public.departamentos
     ADD CONSTRAINT departamentos_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.municipios
     ADD CONSTRAINT municipios_pkey PRIMARY KEY (id);
 
+-- ADD Indexes
 CREATE INDEX sidx_user_residence_geom ON public.users USING gist (residence);
 CREATE INDEX sidx_user_current_location_geom ON public.users USING gist (current_location);
 

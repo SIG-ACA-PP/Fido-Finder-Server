@@ -42,6 +42,7 @@ export class PostController {
     return this.postService.findPostSeenReports(params.id);
   }
 
+  @UseGuards(JwtGuard)
   @Post(':id/seen-reports')
   createPostSeenReport(@Param() params: UUID, @Body() dto: Point) {
     return this.postService.createPostSeenReport(params.id, dto);

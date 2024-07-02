@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { StatsService } from './stats.service';
 
 @Controller('stats')
@@ -11,7 +11,7 @@ export class StatsController {
   }
 
   @Get('/lost-pets/departments/:id')
-  getLostPetsByOneDepartment(@Param('id', ParseIntPipe) id: number) {
+  getLostPetsByOneDepartment(@Param('id') id: string) {
     return this.statsService.getLostPetsByOneDepartment(id);
   }
 
@@ -21,7 +21,7 @@ export class StatsController {
   }
 
   @Get('/lost-pets/municipalities/:id')
-  getLostPetsByOneMunicipality(@Param('id', ParseIntPipe) id: number) {
+  getLostPetsByOneMunicipality(@Param('id') id: string) {
     return this.statsService.getLostPetsByOneMunicipality(id);
   }
 
