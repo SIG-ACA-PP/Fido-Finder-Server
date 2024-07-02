@@ -18,7 +18,7 @@ export class StatsService {
     return results;
   }
 
-// Retrieve the locations (post.lost_in) as geom
+  // Retrieve the locations (post.lost_in) as geom
   // of lost pet reports within a specific department,
   // accepting the department ID as input.
   async getLostPetsByOneDepartment(deptId: string) {
