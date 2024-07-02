@@ -77,7 +77,7 @@ export class NotificationsService {
   }
 
   //Send multiple emails
-  async sendEmail(users: string[], messageOption: string, geography: string, subject: string) {
+  async sendEmail(users: User, messageOption: string, geography: string, subject: string) {
 
     //const userEmails = users.map((u) => u.email)
 
