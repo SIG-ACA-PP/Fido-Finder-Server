@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { NotificationsController } from './notifications.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { env } from 'process';
 
 
 
@@ -14,8 +15,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
         port: 587,
         secure: false,
         auth: {
-          user: 'fidofinder@outlook.com',
-          pass: 'M3smer753357',
+          user: process.env.EMAIL_USERNAME,
+          pass: process.env.EMAIL_PASS
         },
       },
       defaults: {

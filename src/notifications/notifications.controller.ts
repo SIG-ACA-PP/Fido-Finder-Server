@@ -26,7 +26,8 @@ export class NotificationsController {
   @Get('/users/email')
   async notifyUserByEmail() {
     try {
-      await this.notificationsService.sendEmail("", '92991a2b-251c-468d-9bb9-2b7de0332eab');
+      const emails = ['00058820@uca.edu.sv', '00209020@uca.edu.sv', '00121520@uca.edu.sv', '00008020@uca.edu.sv']
+      await this.notificationsService.sendEmail(emails, "easter", "padalustro", 'Que es obo');
     } catch (error: any) {
       console.log(error);
       return "Error sending email";
