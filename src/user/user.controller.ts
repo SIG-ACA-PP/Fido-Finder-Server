@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { users as User } from '@prisma/client';
 import { EditUserDto } from './dto';
 import { UserService } from './user.service';
 import { Point } from 'src/models';
+import { UUID } from 'src/utils/dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -21,6 +23,11 @@ export class UserController {
   @Get('me')
   getMe(@GetUser() user: User) {
     return user;
+  }
+
+  @Get('/find/:id')
+  getOneUser(@Param() params: UUID) {
+    return this.userService.getOneUser(params.id);
   }
 
   @Patch()
