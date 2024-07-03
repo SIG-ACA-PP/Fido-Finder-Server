@@ -11,6 +11,20 @@ export class UserService {
     private geomService: GeometryService,
   ) {}
 
+  getOneUser(userId: string) {
+    return this.prisma.users.findUnique({
+      include: {
+        pets: {
+          include: {
+            colors: true,
+            breeds: true,
+          },
+        },
+      },
+      where: { id: userId },
+    });
+  }
+
   async editUser(userId: string, dto: EditUserDto) {
     const user = await this.prisma.users.update({
       where: {
