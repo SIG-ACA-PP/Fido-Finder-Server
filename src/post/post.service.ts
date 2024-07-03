@@ -78,6 +78,7 @@ export class PostService {
       take,
       skip,
     });
+    if (posts.length === 0) return [];
 
     const postIds = posts.map((post) => post.id);
     const postsAndGeoms = await this.getGeometriesArr(postIds);
@@ -99,6 +100,7 @@ export class PostService {
         author_id: userId,
       },
     });
+    if (posts.length === 0) return [];
 
     const postIds = posts.map((post) => post.id);
     const postsAndGeoms = await this.getGeometriesArr(postIds);

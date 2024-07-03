@@ -52,9 +52,9 @@ export class PetService {
   }
 
   async createPet(dto: CreatePet) {
-    if (!(await this.colorService.getOneColor(dto.color_id)))
+    if (dto.color_id && !(await this.colorService.getOneColor(dto.color_id)))
       throw new BadRequestException('color not found');
-    if (!(await this.breedService.getOneBreed(dto.breed_id)))
+    if (dto.breed_id && !(await this.breedService.getOneBreed(dto.breed_id)))
       throw new BadRequestException('breed not found');
 
     return this.prisma.pets.create({
@@ -64,7 +64,12 @@ export class PetService {
     });
   }
 
-  updatePet(petId: string, dto: UpdatePet) {
+  async updatePet(petId: string, dto: UpdatePet) {
+    if (dto.color_id && !(await this.colorService.getOneColor(dto.color_id)))
+      throw new BadRequestException('color not found');
+    if (dto.breed_id && !(await this.breedService.getOneBreed(dto.breed_id)))
+      throw new BadRequestException('breed not found');
+
     return this.prisma.pets.update({
       data: {
         ...dto,
