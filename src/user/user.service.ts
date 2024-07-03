@@ -12,7 +12,17 @@ export class UserService {
   ) {}
 
   getOneUser(userId: string) {
-    return this.prisma.users.findUnique({ where: { id: userId } });
+    return this.prisma.users.findUnique({
+      include: {
+        pets: {
+          include: {
+            colors: true,
+            breeds: true,
+          },
+        },
+      },
+      where: { id: userId },
+    });
   }
 
   async editUser(userId: string, dto: EditUserDto) {
