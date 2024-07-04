@@ -10,7 +10,9 @@ import {
 import { BreedService } from './breed.service';
 import { CreateBreed, CreateBreedType } from './dto';
 import { JwtGuard } from 'src/auth/guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Breed')
 @Controller('breeds')
 export class BreedController {
   constructor(private breedService: BreedService) {}

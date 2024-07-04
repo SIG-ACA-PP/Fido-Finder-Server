@@ -2,7 +2,9 @@ import { Body, Controller, Get, Param, ParseIntPipe, Post, UseGuards } from '@ne
 import { ColorService } from './color.service';
 import { CreateColor } from './dto';
 import { JwtGuard } from 'src/auth/guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Color')
 @Controller('colors')
 export class ColorController {
   constructor(private colorService: ColorService) {}

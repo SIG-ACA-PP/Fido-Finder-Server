@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { users as User } from '@prisma/client';
 import { PetDto } from 'src/pet/dto/pet.dto';
 
@@ -8,6 +9,7 @@ export class PostDto {
   is_lost: boolean;
   lost_datetime: Date;
   details: string;
+  @ApiProperty({type: () => String})
   users: User;
   pets: PetDto;
   lost_in?: string | null;

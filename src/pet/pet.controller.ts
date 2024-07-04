@@ -20,7 +20,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UpdatePet } from './dto/update-pet.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Pets')
 @Controller('pets')
 export class PetController {
   constructor(

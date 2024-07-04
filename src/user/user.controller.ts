@@ -14,16 +14,22 @@ import { EditUserDto } from './dto';
 import { UserService } from './user.service';
 import { Point } from 'src/models';
 import { UUID } from 'src/utils/dto';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('User')
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   @Get('me')
   getMe(@GetUser() user: User) {
     return user;
   }
+
+  /**
+   * Find a single user by Id
+   */
 
   @Get('/find/:id')
   getOneUser(@Param() params: UUID) {

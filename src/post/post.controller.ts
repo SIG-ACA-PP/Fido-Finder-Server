@@ -15,7 +15,9 @@ import { GetUser } from 'src/auth/decorator';
 import { PaginationQueryDto, UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
 import { CreatePost, DeleteSeenReport, UpdatePost } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Posts')
 @Controller('posts')
 export class PostController {
   constructor(private postService: PostService) {}
