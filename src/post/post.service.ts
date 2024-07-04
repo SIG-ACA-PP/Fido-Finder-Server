@@ -171,7 +171,7 @@ export class PostService {
     `;
   }
 
-  async createPost(dto: CreatePost) {
+  async createPost(dto: CreatePost): Promise<string> {
     const pet = await this.petService.findOneById(dto.pet_id);
     if (!pet) throw new BadRequestException('pet not found');
     if (pet.owner_id !== dto.author_id)
@@ -180,7 +180,7 @@ export class PostService {
       );
 
     const _point = this.geomService.createDBPoint(dto.lost_in);
-    return this.prisma.$queryRaw`
+    const result = await this.prisma.$queryRaw`
       INSERT INTO posts (pet_id, author_id, lost_in, details)
       VALUES (
         ${dto.pet_id}::uuid,
@@ -188,7 +188,9 @@ export class PostService {
         ST_GeomFromText(${_point}, 4326),
         ${dto.details}
       )
+      RETURNING id;
     `;
+    return result[0].id;
   }
 
   createPostSeenReport(postId: string, point: Point) {

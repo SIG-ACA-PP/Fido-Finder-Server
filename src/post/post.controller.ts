@@ -15,10 +15,14 @@ import { GetUser } from 'src/auth/decorator';
 import { PaginationQueryDto, UUID } from 'src/utils/dto';
 import { Point } from 'src/models';
 import { CreatePost, DeleteSeenReport, UpdatePost } from './dto';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Controller('posts')
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    private notificationsService: NotificationsService,
+  ) {}
 
   @Get('')
   findPosts(@Query() paginationQuery: PaginationQueryDto) {
@@ -56,9 +60,12 @@ export class PostController {
 
   @UseGuards(JwtGuard)
   @Post('')
-  createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
+  async createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
     dto.author_id = userId;
-    return this.postService.createPost(dto);
+    const postId = await this.postService.createPost(dto);
+    if (process.env.NOTIFICATION_MODE === 'on')
+      this.notificationsService.notifyUsers(postId);
+    return { id: postId };
   }
 
   @UseGuards(JwtGuard)
