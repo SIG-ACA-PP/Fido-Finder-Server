@@ -28,10 +28,19 @@ export class PostService {
   private async getGeometries(postId: string): Promise<PostGeomsDto> {
     const data = await this.prisma.$queryRaw<PostGeomsDto[]>`
       SELECT 
-        ST_AsGeoJSON(lost_in) as lost_in,
-        ST_AsGeoJSON(found_in) as found_in
-      FROM posts
-      WHERE id = ${postId}::uuid
+        ST_AsGeoJSON(p.lost_in) as lost_in,
+        ST_AsGeoJSON(p.found_in) as found_in,
+        com.colonia as "community", 
+        mun.nom_mun as "mun", 
+        dep.nom_dpto as "dept"
+      FROM posts p
+      LEFT JOIN municipios mun
+        ON ST_Within(p.lost_in, mun.geom)
+      LEFT JOIN departamentos dep
+        ON ST_Within(p.lost_in, dep.geom)
+      LEFT JOIN communities com
+        ON ST_Within(p.lost_in, com.geom)
+      WHERE p.id = ${postId}::uuid
     `;
 
     return data?.[0];
@@ -42,11 +51,20 @@ export class PostService {
   ): Promise<PostGeomsWithIdDto[]> {
     return await this.prisma.$queryRaw<PostGeomsWithIdDto[]>`
       SELECT 
-        id,
-        ST_AsGeoJSON(lost_in) as lost_in,
-        ST_AsGeoJSON(found_in) as found_in
-      FROM posts
-      WHERE id::text IN (${Prisma.join(postIds)})
+        p.id,
+        ST_AsGeoJSON(p.lost_in) as lost_in,
+        ST_AsGeoJSON(p.found_in) as found_in,
+        com.colonia as "community", 
+        mun.nom_mun as "mun", 
+        dep.nom_dpto as "dept"
+      FROM posts p
+      LEFT JOIN municipios mun
+        ON ST_Within(p.lost_in, mun.geom)
+      LEFT JOIN departamentos dep
+        ON ST_Within(p.lost_in, dep.geom)
+      LEFT JOIN communities com
+        ON ST_Within(p.lost_in, com.geom)
+      WHERE p.id::text IN (${Prisma.join(postIds)})
     `;
   }
 
@@ -60,6 +78,11 @@ export class PostService {
         ...post,
         lost_in: geom?.lost_in,
         found_in: geom?.found_in,
+        locationInfo: {
+          dept: geom?.dept,
+          mun: geom?.mun,
+          community: geom?.community,
+        },
       };
     });
   }
@@ -129,6 +152,11 @@ export class PostService {
       ...post,
       lost_in: geom?.lost_in,
       found_in: geom?.found_in,
+      locationInfo: {
+        dept: geom?.dept,
+        mun: geom?.mun,
+        community: geom?.community,
+      },
     };
   }
 
@@ -143,7 +171,7 @@ export class PostService {
     `;
   }
 
-  async createPost(dto: CreatePost) {
+  async createPost(dto: CreatePost): Promise<string> {
     const pet = await this.petService.findOneById(dto.pet_id);
     if (!pet) throw new BadRequestException('pet not found');
     if (pet.owner_id !== dto.author_id)
@@ -152,7 +180,7 @@ export class PostService {
       );
 
     const _point = this.geomService.createDBPoint(dto.lost_in);
-    return this.prisma.$queryRaw`
+    const result = await this.prisma.$queryRaw`
       INSERT INTO posts (pet_id, author_id, lost_in, details)
       VALUES (
         ${dto.pet_id}::uuid,
@@ -160,7 +188,9 @@ export class PostService {
         ST_GeomFromText(${_point}, 4326),
         ${dto.details}
       )
+      RETURNING id;
     `;
+    return result[0].id;
   }
 
   createPostSeenReport(postId: string, point: Point) {
