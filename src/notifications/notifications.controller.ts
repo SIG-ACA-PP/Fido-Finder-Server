@@ -1,6 +1,5 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
-import { Point } from 'src/models';
 
 // NOTE: This controller is just for tests
 @Controller('notifications')
@@ -8,13 +7,13 @@ export class NotificationsController {
   constructor(private notificationsService: NotificationsService) {}
 
   @Get('/users/residence')
-  notifyNearUsersByResidence(@Body() dto: Point) {
-    return this.notificationsService.notifyNearUsersByResidence(dto);
+  notifyNearUsersByResidence(@Query('id') postId: string) {
+    return this.notificationsService.notifyNearUsersByResidence(postId);
   }
 
   @Get('/users/location')
-  notifyNearUsersByLocation(@Body() dto: Point) {
-    return this.notificationsService.notifyNearUsersByLocation(dto);
+  notifyNearUsersByLocation(@Query('id') postId: string) {
+    return this.notificationsService.notifyNearUsersByLocation(postId);
   }
 
   @Get('/users/community')

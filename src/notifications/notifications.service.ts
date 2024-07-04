@@ -1,51 +1,64 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { Point } from 'src/models';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Message } from 'src/utils/dto/message';
 import { NotifyUserDto } from './dto';
+import { PostService } from 'src/post/post.service';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     private prisma: PrismaService,
+    private postService: PostService,
     private readonly mailerService: MailerService,
   ) {}
+
+  async notifyUsers(postId: string) {
+    const post = await this.postService.findOneById(postId);
+    const location: string =
+      post.locationInfo.community ??
+      post.locationInfo.mun ??
+      post.locationInfo.dept;
+    const title: string = `Fido Finder Alerts - ${post.pets.name ?? ''}`;
+
+    const usersByResidence = await this.notifyNearUsersByResidence(postId);
+    this.sendMultipleEmails(usersByResidence, 'residence', location, title);
+
+    const usersByLocation = await this.notifyNearUsersByLocation(postId);
+    this.sendMultipleEmails(usersByLocation, 'location', location, title);
+  }
 
   // Obtain all users (id, name, lastname, email, phone) who are within
   // a radius (to be defined, for now use 2km) of
   // the point where a pet is reported lost (post.lost_in)
   // using their residence.
-  async notifyNearUsersByResidence(point: Point): Promise<NotifyUserDto[]> {
+  async notifyNearUsersByResidence(postId: string): Promise<NotifyUserDto[]> {
     const users = await this.prisma.$queryRaw`
       SELECT u.id, u.name, u.lastname, u.email, u.phone_number
       FROM users u
+      JOIN posts p ON p.id = ${postId}::uuid
       WHERE ST_DWithin(
           ST_Transform(u.residence, 3857), 
-          ST_Transform(ST_SetSRID(ST_MakePoint(${point.lon}, ${point.lat}), 4326), 3857), 
+          ST_Transform(p.lost_in, 3857), 
           2000
       );
     `;
 
-    const data = users as NotifyUserDto[];
-    data.forEach((user) =>
-      this.sendEmail(user.email, 'residence', 'colonia x', 'Fido Finder Alerts'),
-    );
-
-    return data;
+    return users as NotifyUserDto[];
   }
 
   // Obtain all users (id, name, lastname, email, phone) who are within
   // a radius (to be defined, for now use 2km) of
   // the point where a pet is reported lost (post.lost_in)
   // using their current location.
-  async notifyNearUsersByLocation(point: Point): Promise<NotifyUserDto[]> {
+  async notifyNearUsersByLocation(postId: string): Promise<NotifyUserDto[]> {
     const users = await this.prisma.$queryRaw`
       SELECT u.id, u.name, u.lastname, u.email, u.phone_number
       FROM users u
+      JOIN posts p ON p.id = ${postId}::uuid
       WHERE ST_DWithin(
           ST_Transform(u.current_location, 3857), 
-          ST_Transform(ST_SetSRID(ST_MakePoint(${point.lon}, ${point.lat}), 4326), 3857), 
+          ST_Transform(p.lost_in, 3857), 
           2000
       );
     `;
@@ -73,6 +86,17 @@ export class NotificationsService {
     `;
 
     return users as NotifyUserDto[];
+  }
+
+  private async sendMultipleEmails(
+    data: NotifyUserDto[],
+    messageOption: 'residence' | 'location' | 'community' | 'easter',
+    location: string,
+    title: string,
+  ) {
+    data.forEach((user) =>
+      this.sendEmail(user.email, messageOption, location, title),
+    );
   }
 
   // Send email
