@@ -31,15 +31,12 @@ export class NotificationsController {
         '00121520@uca.edu.sv',
         '00008020@uca.edu.sv',
       ];
-      const promise = emails.map((email) =>
-        this.notificationsService.sendEmail(
-          email,
-          'easter',
-          'padalustro',
-          'Que es obo',
-        ),
+      await this.notificationsService.sendEmail(
+        emails,
+        'easter',
+        'padalustro',
+        'Que es obo',
       );
-      await Promise.allSettled(promise);
     } catch (error: any) {
       console.log(error);
       return 'Error sending email';

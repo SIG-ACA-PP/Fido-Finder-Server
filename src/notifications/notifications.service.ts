@@ -22,10 +22,13 @@ export class NotificationsService {
     const title: string = `Fido Finder Alerts - ${post.pets.name ?? ''}`;
 
     const usersByResidence = await this.notifyNearUsersByResidence(postId);
-    this.sendMultipleEmails(usersByResidence, 'residence', location, title);
+    const emailsByResidence = usersByResidence.map((user) => user.email);
+    await this.sendEmail(emailsByResidence, 'residence', location, title);
+
 
     const usersByLocation = await this.notifyNearUsersByLocation(postId);
-    this.sendMultipleEmails(usersByLocation, 'location', location, title);
+    const emailsByLocation = usersByLocation.map((user) => user.email);
+    await this.sendEmail(emailsByLocation, 'location', location, title);
   }
 
   // Obtain all users (id, name, lastname, email, phone) who are within
@@ -88,20 +91,9 @@ export class NotificationsService {
     return users as NotifyUserDto[];
   }
 
-  private async sendMultipleEmails(
-    data: NotifyUserDto[],
-    messageOption: 'residence' | 'location' | 'community' | 'easter',
-    location: string,
-    title: string,
-  ) {
-    data.forEach((user) =>
-      this.sendEmail(user.email, messageOption, location, title),
-    );
-  }
-
-  // Send email
+  // Send emails
   async sendEmail(
-    email: string,
+    emails: string[],
     messageOption: 'residence' | 'location' | 'community' | 'easter',
     geography: string,
     subject: string,
@@ -110,7 +102,7 @@ export class NotificationsService {
 
     try {
       await this.mailerService.sendMail({
-        to: email,
+        to: emails,
         subject: subject,
         text: message,
       });
