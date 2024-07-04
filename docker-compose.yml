@@ -44,6 +44,9 @@ services:
       CLOUDINARY_API_KEY: ""
       CLOUDINARY_API_SECRET: ""
       REDIRECT_CLIENT: ""
+      EMAIL_USERNAME: ""
+      EMAIL_PASS: ""
+      NOTIFICATION_MODE: ""
     networks:
       - fidoapp
     depends_on:
