@@ -19,6 +19,7 @@ import { CreatePet } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UpdatePet } from './dto/update-pet.dto';
 
 @Controller('pets')
 export class PetController {
@@ -28,7 +29,7 @@ export class PetController {
   ) {}
 
   // TODO: add pagination
-  @Get('')
+  @Get()
   findPets() {
     return this.petService.findAll();
   }
@@ -39,14 +40,13 @@ export class PetController {
     return this.petService.findAllByUser(userId);
   }
 
-  @UseGuards(JwtGuard)
   @Get(':id')
   findPetById(@Param('id') id: string) {
     return this.petService.findOneById(id);
   }
 
   @UseGuards(JwtGuard)
-  @Post('')
+  @Post()
   @UseInterceptors(FileInterceptor('file'))
   async createPet(
     @GetUser('id') userId: string,
@@ -64,21 +64,23 @@ export class PetController {
   }
 
   @UseGuards(JwtGuard)
-  @Patch(':id/upload-image')
+  @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
     @Param('id') id: string,
+    @Body() dto: UpdatePet,
   ) {
-    if (!file) throw new BadRequestException('file is required');
+    if (file) {
+      const image = await this.cloudinaryService.uploadFile(file);
+      dto.img = image?.url ?? null;
+      if (!image || !image.url)
+        throw new InternalServerErrorException(
+          'It was not possible to upload the image',
+        );
+    }
 
-    const image = await this.cloudinaryService.uploadFile(file);
-    if (!image || !image.url)
-      throw new InternalServerErrorException(
-        'It was not possible to upload the image',
-      );
-
-    return this.petService.updatePet(id, { img: image.url });
+    return this.petService.updatePet(id, dto);
   }
 
   @UseGuards(JwtGuard)

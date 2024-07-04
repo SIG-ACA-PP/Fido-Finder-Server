@@ -12,14 +12,14 @@ export class CreatePet {
   @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
   @IsNumber()
   @IsOptional()
-  color_id: number;
+  color_id?: number;
 
   @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
   @IsNumber()
   @IsOptional()
-  breed_id: number;
+  breed_id?: number;
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 }

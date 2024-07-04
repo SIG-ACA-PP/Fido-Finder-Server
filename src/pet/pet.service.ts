@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -6,10 +7,16 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePet } from './dto';
 import { UpdatePet } from './dto/update-pet.dto';
+import { ColorService } from 'src/color/color.service';
+import { BreedService } from 'src/breed/breed.service';
 
 @Injectable()
 export class PetService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private colorService: ColorService,
+    private breedService: BreedService,
+  ) {}
 
   findAll() {
     return this.prisma.pets.findMany({
@@ -44,7 +51,12 @@ export class PetService {
     });
   }
 
-  createPet(dto: CreatePet) {
+  async createPet(dto: CreatePet) {
+    if (dto.color_id && !(await this.colorService.getOneColor(dto.color_id)))
+      throw new BadRequestException('color not found');
+    if (dto.breed_id && !(await this.breedService.getOneBreed(dto.breed_id)))
+      throw new BadRequestException('breed not found');
+
     return this.prisma.pets.create({
       data: {
         ...dto,
@@ -52,7 +64,12 @@ export class PetService {
     });
   }
 
-  updatePet(petId: string, dto: UpdatePet) {
+  async updatePet(petId: string, dto: UpdatePet) {
+    if (dto.color_id && !(await this.colorService.getOneColor(dto.color_id)))
+      throw new BadRequestException('color not found');
+    if (dto.breed_id && !(await this.breedService.getOneBreed(dto.breed_id)))
+      throw new BadRequestException('breed not found');
+
     return this.prisma.pets.update({
       data: {
         ...dto,

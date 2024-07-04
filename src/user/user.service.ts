@@ -11,6 +11,20 @@ export class UserService {
     private geomService: GeometryService,
   ) {}
 
+  getOneUser(userId: string) {
+    return this.prisma.users.findUnique({
+      include: {
+        pets: {
+          include: {
+            colors: true,
+            breeds: true,
+          },
+        },
+      },
+      where: { id: userId },
+    });
+  }
+
   async editUser(userId: string, dto: EditUserDto) {
     const user = await this.prisma.users.update({
       where: {
@@ -22,6 +36,17 @@ export class UserService {
     });
 
     return user;
+  }
+
+  async getUserResidence(userId: string) {
+    const res = await this.prisma.$queryRaw`
+      SELECT 
+        ST_AsGeoJSON(residence) as residence
+      FROM users
+      WHERE id = ${userId}::uuid
+    `;
+
+    return { residence: res?.[0].residence || null };
   }
 
   // This function should set residence to geometry
@@ -42,6 +67,7 @@ export class UserService {
     WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set residence to NULL
   async deleteUserResidence(userId: string) {
     const user = await this.prisma.users.findUnique({
@@ -77,6 +103,7 @@ export class UserService {
     WHERE id=${userId}::uuid
     `;
   }
+
   // This function should set current_location to NULL
   async deleteUserLocation(userId: string) {
     const user = await this.prisma.users.findUnique({

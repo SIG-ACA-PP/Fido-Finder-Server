@@ -1,11 +1,11 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Query } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { Point } from 'src/models';
 
 // NOTE: This controller is just for tests
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private notificationsService: NotificationsService) { }
+  constructor(private notificationsService: NotificationsService) {}
 
   @Get('/users/residence')
   notifyNearUsersByResidence(@Body() dto: Point) {
@@ -18,22 +18,35 @@ export class NotificationsController {
   }
 
   @Get('/users/community')
-  notifyNearUsersByCommunity(@Body() dto: Point) {
-    return this.notificationsService.notifyNearUsersByCommunity(dto);
+  notifyNearUsersByCommunity(@Query('id') postId: string) {
+    return this.notificationsService.notifyNearUsersByCommunity(postId);
   }
 
   // test route for sending emails
   @Get('/users/email')
   async notifyUserByEmail() {
     try {
-      const emails = ['00058820@uca.edu.sv', '00209020@uca.edu.sv', '00121520@uca.edu.sv', '00008020@uca.edu.sv']
-      await this.notificationsService.sendEmail(emails, "easter", "padalustro", 'Que es obo');
+      const emails = [
+        '00058820@uca.edu.sv',
+        '00209020@uca.edu.sv',
+        '00121520@uca.edu.sv',
+        '00008020@uca.edu.sv',
+      ];
+      const promise = emails.map((email) =>
+        this.notificationsService.sendEmail(
+          email,
+          'easter',
+          'padalustro',
+          'Que es obo',
+        ),
+      );
+      await Promise.allSettled(promise);
     } catch (error: any) {
       console.log(error);
-      return "Error sending email";
+      return 'Error sending email';
     }
 
-    return 'Email Sent'
+    return 'Email Sent';
   }
 
   @Get('/all')
