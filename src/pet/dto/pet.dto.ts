@@ -34,8 +34,14 @@ export class PetDto {
   description: string;
 
 
+  /**
+   * @example 'black and white'
+   */
   @ApiProperty({ type: () => String })
   colors: Color;
+  /**
+   * @example 'Husky'
+   */
   @ApiProperty({ type: () => String })
   breeds: Breed;
 }
