@@ -5,6 +5,16 @@ import { StatsService } from './stats.service';
 export class StatsController {
   constructor(private statsService: StatsService) {}
 
+  @Get('/departments')
+  getDepartments() {
+    return this.statsService.getDepartments();
+  }
+
+  @Get('/municipalities')
+  getMunicipalities() {
+    return this.statsService.getMunicipalities();
+  }
+
   @Get('/lost-pets/departments')
   getLostPetAmountsByDepartments() {
     return this.statsService.getLostPetAmountsByDepartments();
