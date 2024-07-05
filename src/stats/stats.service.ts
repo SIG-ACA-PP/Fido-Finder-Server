@@ -5,6 +5,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class StatsService {
   constructor(private prisma: PrismaService) {}
 
+  async getDepartments() {
+    return await this.prisma.departamentos.findMany({
+      select: { nom_dpto: true, cod_dpto: true },
+    });
+  }
+
+  async getMunicipalities() {
+    const res = await this.prisma.municipios.findMany({
+      select: { nom_mun: true, cod_mun: true },
+    });
+    return res.filter((res) => res.cod_mun);
+  }
+
   // Obtain the number of lost pets grouped by department.
   async getLostPetAmountsByDepartments() {
     const results = await this.prisma.$queryRaw`
