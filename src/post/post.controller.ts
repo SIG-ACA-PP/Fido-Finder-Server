@@ -36,6 +36,11 @@ export class PostController {
     return this.postService.findAllByUser(userId);
   }
 
+  @Post('/around-me')
+  findPostsAroundMe(@Body() point: Point) {
+    return this.postService.findPostsNearPoint(point);
+  }
+
   @Get(':id')
   findPostById(@Param() params: UUID) {
     return this.postService.findOneById(params.id);
@@ -59,7 +64,7 @@ export class PostController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('')
+  @Post()
   async createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
     dto.author_id = userId;
     const postId = await this.postService.createPost(dto);

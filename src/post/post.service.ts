@@ -160,6 +160,23 @@ export class PostService {
     };
   }
 
+  async findPostsNearPoint(point: Point) {
+    const posts: { id: string }[] = await this.prisma.$queryRaw`
+      SELECT p.id
+      FROM posts p
+      WHERE ST_DWithin(
+          ST_Transform(p.lost_in, 3857), 
+          ST_Transform(ST_SetSRID(ST_MakePoint(${point.lon}, ${point.lat}), 4326), 3857), 
+          5000
+      )
+      ORDER BY p.lost_datetime DESC
+      LIMIT 30;
+    `;
+
+    const promises = posts.map((post) => this.findOneById(post.id));
+    return Promise.all(promises);
+  }
+
   findPostSeenReports(postId: string) {
     return this.prisma.$queryRaw`
       SELECT 
