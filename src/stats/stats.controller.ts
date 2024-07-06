@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { StatsService } from './stats.service';
 
 @Controller('stats')
@@ -31,7 +31,7 @@ export class StatsController {
   }
 
   @Get('/lost-pets/municipalities/:id')
-  getLostPetsByOneMunicipality(@Param('id') id: string) {
+  getLostPetsByOneMunicipality(@Param('id', ParseIntPipe) id: number) {
     return this.statsService.getLostPetsByOneMunicipality(id);
   }
 
