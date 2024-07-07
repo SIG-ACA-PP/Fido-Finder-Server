@@ -15,7 +15,9 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { GoogleOauthGuard } from './guard';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   private readonly redirectUrl: string;
@@ -27,21 +29,35 @@ export class AuthController {
     this.redirectUrl = config.get<string>('REDIRECT_CLIENT');
   }
 
+  /**
+   * Allows a user to sign in the app, must have been authenticated by google previously
+   * @param authDto 
+   * @returns 
+   */
   @HttpCode(HttpStatus.OK)
   @Post('signin')
   signIn(@Body() authDto: AuthDto) {
     return this.authService.signIn(authDto);
   }
 
+  /**
+   * 
+   * @param authDto 
+   * @returns 
+   */
   @Post('signup')
   signUp(@Body() authDto: AuthDto) {
     return this.authService.signUp(authDto);
   }
 
+  
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   async auth() {}
 
+  /**
+   * Allows a user to authenticate using Google
+   */
   @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallback(@Req() req, @Res() res) {

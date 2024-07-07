@@ -6,6 +6,10 @@ import {
 import { Point } from 'src/models';
 
 export class UpdatePost {
+  /**
+   * Location where the pet was found
+   * @example {lon: 89.1874461  lat:-13.487516587}
+   */
   @IsDefined()
   @ValidateNested()
   @Type(() => Point)
