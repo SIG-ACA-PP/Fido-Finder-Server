@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
-import * as argon from 'argon2';
+// import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -19,7 +19,7 @@ export class AuthService {
   ) {}
 
   async signToken(
-    userId: number,
+    userId: string,
     email: string,
   ): Promise<{ access_token: string }> {
     const payload = {
@@ -28,7 +28,7 @@ export class AuthService {
     };
     const secret = this.config.get('JWT_SECRET');
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
+      expiresIn: '10d',
       secret,
     });
 
@@ -37,27 +37,39 @@ export class AuthService {
     };
   }
 
+  async oAuthLogin(dto: AuthDto) {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!user) return this.signUp(dto);
+    else return this.signToken(user.id, user.email);
+  }
+
+  // TODO: remove after testing process!
   async signIn(dto: AuthDto) {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.users.findUnique({
       where: {
         email: dto.email,
       },
     });
     if (!user) throw new UnauthorizedException('Incorrect crendentials');
 
-    const pwMatches = await argon.verify(user.hash, dto.password);
-    if (!pwMatches) throw new UnauthorizedException('Incorrect crendentials');
+    // const pwMatches = await argon.verify(user.hash, dto.password);
+    // if (!pwMatches) throw new UnauthorizedException('Incorrect crendentials');
 
     return this.signToken(user.id, user.email);
   }
 
+  // TODO: make private after testing process!
   async signUp(authDto: AuthDto) {
-    const hash = await argon.hash(authDto.password);
+    // const hash = await argon.hash(authDto.password);
     try {
-      const user = await this.prisma.user.create({
+      const user = await this.prisma.users.create({
         data: {
-          email: authDto.email,
-          hash,
+          ...authDto,
         },
       });
 

@@ -1,15 +1,21 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class EditUserDto {
-  @IsEmail()
+  @IsString()
   @IsOptional()
-  email?: string;
+  name?: string;
 
   @IsString()
   @IsOptional()
-  firstName?: string;
+  lastname?: string;
 
   @IsString()
   @IsOptional()
-  lastName?: string;
+  phone_number?: string;
+
+  @IsDate()
+  @IsOptional()
+  @Transform(({ value }) => value && new Date(value))
+  dob?: Date;
 }

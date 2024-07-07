@@ -22,10 +22,11 @@ CREATE TABLE "breeds" (
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  "names" varchar NOT NULL,
-  "last_names" varchar NOT NULL,
-  "phone_number" varchar NOT NULL,
-  "email" varchar NOT NULL,
+  "name" varchar,
+  "lastname" varchar,
+  "phone_number" varchar,
+  "img" varchar,
+  "email" varchar NOT NULL UNIQUE,
   "dob" timestamp,
   "residence" geometry(Point,4326),
   "current_location" geometry(Point,4326)
@@ -37,16 +38,17 @@ CREATE TABLE "pets" (
   "name" varchar NOT NULL,
   "color_id" int REFERENCES "colors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
   "breed_id" int REFERENCES "breeds" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  "description" varchar
+  "description" varchar,
+  "img" varchar
 );
 
 CREATE TABLE "posts" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "pet_id" uuid REFERENCES "pets" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   "author_id" uuid REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  "is_lost" bool,
+  "is_lost" bool DEFAULT true,
   "lost_in" geometry(Point,4326),
-  "lost_datetime" timestamp,
+  "lost_datetime" timestamp  DEFAULT CURRENT_TIMESTAMP,
   "found_in" geometry(Point,4326),
   "details" text
 );
@@ -54,15 +56,29 @@ CREATE TABLE "posts" (
 CREATE TABLE "places_seen_in" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "post_id" uuid REFERENCES "posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  "date_seen" timestamp,
+  "date_seen" timestamp DEFAULT CURRENT_TIMESTAMP,
   "geom" geometry(Point,4326)
 );
 
-CREATE TABLE "communities" (
+/* CREATE TABLE "communities" (
   "id" serial PRIMARY KEY,
   "name" varchar NOT NULL,
   "geom" geometry(MultiPolygon,32616) -- TODO: definir sistema de referecia
+); */
+
+DROP TABLE IF EXISTS public.communities CASCADE;
+CREATE TABLE public.communities (
+  geom public.geometry(MultiPolygon,4326),
+  id integer NOT NULL,
+  fid bigint,
+  poligono character varying(254),
+  zona_posta character varying(254),
+  cod_mun4 character varying(254),
+  tipo character varying(254),
+  colonia character varying(254),
+  tipo_colon character varying(254)
 );
+
 
 -- CREATE TABLE "departments" (
 --   "id" serial PRIMARY KEY,
@@ -107,12 +123,17 @@ CREATE TABLE public.municipios (
   shape_area double precision
 );
 
+-- ADD Primary Keys
+ALTER TABLE ONLY public.communities
+    ADD CONSTRAINT communities_pkey PRIMARY KEY (id);
+
 ALTER TABLE ONLY public.departamentos
     ADD CONSTRAINT departamentos_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.municipios
     ADD CONSTRAINT municipios_pkey PRIMARY KEY (id);
 
+-- ADD Indexes
 CREATE INDEX sidx_user_residence_geom ON public.users USING gist (residence);
 CREATE INDEX sidx_user_current_location_geom ON public.users USING gist (current_location);
 

@@ -30,9 +30,15 @@ model colors {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model communities {
-  id   Int                      @id @default(autoincrement())
-  name String                   @db.VarChar
-  geom Unsupported("geometry")?
+  geom       Unsupported("geometry")?
+  id         Int                      @id
+  fid        BigInt?
+  poligono   String?                  @db.VarChar(254)
+  zona_posta String?                  @db.VarChar(254)
+  cod_mun4   String?                  @db.VarChar(254)
+  tipo       String?                  @db.VarChar(254)
+  colonia    String?                  @db.VarChar(254)
+  tipo_colon String?                  @db.VarChar(254)
 
   @@index([geom], map: "sidx_communities_geom", type: Gist)
 }
@@ -44,6 +50,7 @@ model pets {
   color_id    Int?
   breed_id    Int?
   description String? @db.VarChar
+  img         String? @db.VarChar
   breeds      breeds? @relation(fields: [breed_id], references: [id], onDelete: Restrict)
   colors      colors? @relation(fields: [color_id], references: [id], onDelete: Restrict)
   users       users?  @relation(fields: [owner_id], references: [id], onDelete: Cascade)
@@ -54,7 +61,7 @@ model pets {
 model places_seen_in {
   id        String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   post_id   String?                  @db.Uuid
-  date_seen DateTime?                @db.Timestamp(6)
+  date_seen DateTime?                @default(now()) @db.Timestamp(6)
   geom      Unsupported("geometry")?
   posts     posts?                   @relation(fields: [post_id], references: [id], onDelete: Cascade)
 
@@ -66,9 +73,9 @@ model posts {
   id             String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   pet_id         String?                  @db.Uuid
   author_id      String?                  @db.Uuid
-  is_lost        Boolean?
+  is_lost        Boolean?                 @default(true)
   lost_in        Unsupported("geometry")?
-  lost_datetime  DateTime?                @db.Timestamp(6)
+  lost_datetime  DateTime?                @default(now()) @db.Timestamp(6)
   found_in       Unsupported("geometry")?
   details        String?
   places_seen_in places_seen_in[]
@@ -91,10 +98,11 @@ model spatial_ref_sys {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model users {
   id               String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  names            String                   @db.VarChar
-  last_names       String                   @db.VarChar
-  phone_number     String                   @db.VarChar
-  email            String                   @db.VarChar
+  name             String?                  @db.VarChar
+  lastname         String?                  @db.VarChar
+  phone_number     String?                  @db.VarChar
+  img              String?                  @db.VarChar
+  email            String                   @unique @db.VarChar
   dob              DateTime?                @db.Timestamp(6)
   residence        Unsupported("geometry")?
   current_location Unsupported("geometry")?

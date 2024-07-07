@@ -1,30 +1,18 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a><img src="https://i.imgur.com/BMJr4VC.png" width="100" alt="Fido Finder Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">Fido Finder is a web application that runs with <a href="https://nestjs.com" target="_blank">nestjs</a>, a progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+<a><img src="https://img.shields.io/badge/npm-v10.3.10-blue" alt="NPM Version" /></a>
+<a><img src="https://img.shields.io/badge/license-AGPL%20v3-green" alt="Package License" /></a>
+<a><img src="https://img.shields.io/badge/build-passing-4cca22" alt="Build" /></a>
+<a><img src="https://img.shields.io/badge/coverage-10%25-green" alt="Coverage" /></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Fido Finder is a web application where users can post information about their lost pets, including the location where they were lost, pet's name, a photo (optional), and the owner's contact information. Users can prioritize viewing lost pets nearby by sharing their location. The platform facilitates direct contact between the finder and the owner and promotes quick collaboration in locating lost pets.
 
 ## Installation
 
@@ -32,6 +20,29 @@
 $ npm install
 ```
 
+## Running postgis docker container
+
+Option 1 (Recommended)
+
+```bash
+# This will create postgis container and a working db
+$ npm run db:dev:restart
+```
+
+Option 2
+
+```bash
+# This will create postgis container and a empty db
+$ docker pull postgis/postgis
+$ docker run --name postgis -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgis/postgis
+```
+
+## Configure prisma client
+
+```bash
+# Generate Prisma Client with the following command
+$ prisma generate
+```
 ## Running the app
 
 ```bash
@@ -45,14 +56,16 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Prisma
+## Useful dev commands
+
+### Prisma
 
 ```bash
-# create migrations
-$ npx prisma migrate dev --name init
+# Pull schema
+$ npx prisma db pull
 ```
 
-## Prisma studio
+### Prisma studio
 
 ```bash
 # open prisma studio
@@ -62,7 +75,7 @@ $ npx prisma studio
 $ npx dotenv -e .env.test -- prisma studio
 ```
 
-## Test
+### Test
 
 ```bash
 # unit tests
@@ -75,16 +88,28 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Deploy using docker
+
+```
+docker compose build
+```
+
+```
+docker compose up -d
+```
+
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+This is an open-source project licensed under AGPLv3. It can grow thanks to the sponsors and the support of the amazing contributors.
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- [Carlos Mercado](https://github.com/carlosxmerca)
+- [Victor Peraza](https://github.com/Peraza32)
+- [Daniel Solis](https://github.com/DanielSolis00209020)
+- [Diego Rivas](https://github.com/rivasdiego-dev)
+- [Miguel Acosta](https://github.com/Acostam331)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Fido Finder is [AGPL v3 Licensed](LICENSE).
