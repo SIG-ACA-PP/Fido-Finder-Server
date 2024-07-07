@@ -42,8 +42,14 @@ export class UserController {
     }
   })
   @Get('me')
-  getMe(@GetUser() user: User) {
-    return user;
+  async getMe(@GetUser() user: User) {
+    const info = await this.userService.getOneUserResidence(user.id);
+    return {
+      ...user,
+      locationInfo: {
+        ...info,
+      },
+    };
   }
 
   /**

@@ -60,6 +60,20 @@ export class PostController {
   }
 
   /**
+  * Returns all the post based on actual location
+  *
+  */
+  @ApiOkResponse({
+    description: "All posts nearby provided location", 
+    type: object, 
+    isArray:true
+  })
+  @Post('/around-me')
+  findPostsAroundMe(@Body() point: Point) {
+    return this.postService.findPostsNearPoint(point);
+  }
+
+  /**
    * Get a single post based on it's id
    * @param userId 
    * @returns 
@@ -70,6 +84,7 @@ export class PostController {
     isArray: false
 
   })
+
   @Get(':id')
   findPostById(@Param() params: UUID) {
     return this.postService.findOneById(params.id);
@@ -147,7 +162,7 @@ export class PostController {
 
   })
   @UseGuards(JwtGuard)
-  @Post('')
+  @Post()
   async createPost(@GetUser('id') userId: string, @Body() dto: CreatePost) {
     dto.author_id = userId;
     const postId = await this.postService.createPost(dto);

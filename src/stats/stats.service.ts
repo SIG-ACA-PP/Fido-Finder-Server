@@ -5,6 +5,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class StatsService {
   constructor(private prisma: PrismaService) {}
 
+  async getDepartments() {
+    return await this.prisma.departamentos.findMany({
+      select: { nom_dpto: true, cod_dpto: true },
+    });
+  }
+
+  async getMunicipalities() {
+    const res = await this.prisma.municipios.findMany({
+      select: { nom_mun: true, id: true },
+    });
+    return res.filter((res) => res.id);
+  }
+
   // Obtain the number of lost pets grouped by department.
   async getLostPetAmountsByDepartments() {
     const results = await this.prisma.$queryRaw`
@@ -49,12 +62,12 @@ export class StatsService {
   // Retrieve the locations (post.lost_in) as geom
   // of lost pet reports within a specific municipality,
   // accepting the municipality ID as input.
-  async getLostPetsByOneMunicipality(munId: string) {
+  async getLostPetsByOneMunicipality(munId: number) {
     const results = await this.prisma.$queryRaw`
       SELECT ST_AsGeoJSON(p.lost_in) as geom
       FROM posts p
       JOIN municipios m ON ST_Within(p.lost_in, m.geom)
-      WHERE m.cod_mun = ${munId}
+      WHERE m.id = ${munId}
         AND p.is_lost = true;
     `;
 

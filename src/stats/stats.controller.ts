@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { StatsService } from './stats.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -7,7 +7,36 @@ import { ApiTags } from '@nestjs/swagger';
 export class StatsController {
   constructor(private statsService: StatsService) { }
 
+
   /**
+  * Returns all the departments on the db
+  *
+  */
+  @ApiOkResponse({
+    description: "Return all departments on DB ", 
+    type: object, 
+    isArray:true
+  })
+  @Get('/departments')
+  getDepartments() {
+    return this.statsService.getDepartments();
+  }
+
+ /**
+  * Returns all the municipalities on the db
+  *
+  */
+  @ApiOkResponse({
+    description: "Return all municipalities on DB ", 
+    type: object, 
+    isArray:true
+  })
+  @Get('/municipalities')
+  getMunicipalities() {
+    return this.statsService.getMunicipalities();
+  }
+
+   /**
    * Get all the pets lost by deparment
    * @returns 
    */
@@ -39,7 +68,7 @@ export class StatsController {
    * @returns 
    */
   @Get('/lost-pets/municipalities/:id')
-  getLostPetsByOneMunicipality(@Param('id') id: string) {
+  getLostPetsByOneMunicipality(@Param('id', ParseIntPipe) id: number) {
     return this.statsService.getLostPetsByOneMunicipality(id);
   }
 
@@ -50,5 +79,10 @@ export class StatsController {
   @Get('/lost-pets/communities')
   getLostPetAmountsByCommunities() {
     return this.statsService.getLostPetAmountsByCommunities();
+  }
+
+  @Get('/test')
+  test() {
+    return { msg: 'Hello this is a test :) v3' };
   }
 }
