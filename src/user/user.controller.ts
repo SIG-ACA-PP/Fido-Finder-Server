@@ -21,8 +21,14 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('me')
-  getMe(@GetUser() user: User) {
-    return user;
+  async getMe(@GetUser() user: User) {
+    const info = await this.userService.getOneUserResidence(user.id);
+    return {
+      ...user,
+      locationInfo: {
+        ...info,
+      },
+    };
   }
 
   @Get('/find/:id')
