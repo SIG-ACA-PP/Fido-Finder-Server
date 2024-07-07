@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { EditUserDto } from './dto';
+import { EditUserDto, UserGeomsDto } from './dto';
 import { Point } from 'src/models';
 import { GeometryService } from 'src/geometry/geometry.service';
 
@@ -23,6 +23,29 @@ export class UserService {
       },
       where: { id: userId },
     });
+  }
+
+  async getOneUserResidence(userId: string): Promise<UserGeomsDto> {
+    const res = await this.prisma.$queryRaw<UserGeomsDto[]>`
+    SELECT 
+        com.colonia as "community", 
+        mun.nom_mun as "mun", 
+        dep.nom_dpto as "dept"
+      FROM users u
+      LEFT JOIN municipios mun
+        ON ST_Within(u.residence, mun.geom)
+      LEFT JOIN departamentos dep
+        ON ST_Within(u.residence, dep.geom)
+      LEFT JOIN communities com
+        ON ST_Within(u.residence, com.geom)
+      WHERE u.id = ${userId}::uuid
+  `;
+
+    return {
+      community: res?.[0].community || null,
+      dept: res?.[0].dept || null,
+      mun: res?.[0].mun || null,
+    };
   }
 
   async editUser(userId: string, dto: EditUserDto) {
