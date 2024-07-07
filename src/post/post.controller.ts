@@ -65,7 +65,7 @@ export class PostController {
   */
   @ApiOkResponse({
     description: "All posts nearby provided location", 
-    type: object, 
+    type: Object, 
     isArray:true
   })
   @Post('/around-me')

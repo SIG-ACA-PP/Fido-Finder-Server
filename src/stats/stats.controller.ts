@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { StatsService } from './stats.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Stats')
 @Controller('stats')
@@ -14,7 +14,7 @@ export class StatsController {
   */
   @ApiOkResponse({
     description: "Return all departments on DB ", 
-    type: object, 
+    type: Object, 
     isArray:true
   })
   @Get('/departments')
@@ -28,7 +28,7 @@ export class StatsController {
   */
   @ApiOkResponse({
     description: "Return all municipalities on DB ", 
-    type: object, 
+    type: Object, 
     isArray:true
   })
   @Get('/municipalities')
