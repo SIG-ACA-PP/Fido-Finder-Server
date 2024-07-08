@@ -31,8 +31,8 @@ export class AuthController {
 
   /**
    * Allows a user to sign in the app, must have been authenticated by google previously
-   * @param authDto 
-   * @returns 
+   * @param authDto
+   * @returns
    */
   @HttpCode(HttpStatus.OK)
   @Post('signin')
@@ -41,16 +41,18 @@ export class AuthController {
   }
 
   /**
-   * 
-   * @param authDto 
-   * @returns 
+   *
+   * @param authDto
+   * @returns
    */
   @Post('signup')
   signUp(@Body() authDto: AuthDto) {
     return this.authService.signUp(authDto);
   }
 
-  
+  /**
+   * Allows a user to authenticate using Google
+   */
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   async auth() {}
