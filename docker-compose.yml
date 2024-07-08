@@ -47,6 +47,7 @@ services:
       EMAIL_USERNAME: ""
       EMAIL_PASS: ""
       NOTIFICATION_MODE: ""
+      MODE: "prod"
     networks:
       - fidoapp
     depends_on:

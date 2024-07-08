@@ -37,6 +37,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('signin')
   signIn(@Body() authDto: AuthDto) {
+    if (process.env.MODE !== 'dev')
+      throw new ForbiddenException(
+        'This endpoint is only available in testing',
+      );
+
     return this.authService.signIn(authDto);
   }
 
@@ -47,6 +52,11 @@ export class AuthController {
    */
   @Post('signup')
   signUp(@Body() authDto: AuthDto) {
+    if (process.env.MODE !== 'dev')
+      throw new ForbiddenException(
+        'This endpoint is only available in testing',
+      );
+
     return this.authService.signUp(authDto);
   }
 
